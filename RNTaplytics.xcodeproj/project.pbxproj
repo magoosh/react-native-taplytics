@@ -211,7 +211,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/../taplytics-ios-sdk/Taplytics.framework/Headers/Taplytics",
+					"$(SRCROOT)/../taplytics-ios-sdk/Taplytics.framework/Headers",
 					"$(SRCROOT)/../../node_modules/react-native/React",
 					"$(SRCROOT)/../../React",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
