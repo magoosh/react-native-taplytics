@@ -4,6 +4,7 @@
   "description": "taplytics integration for react-native",
   "main": "index.js",
   "scripts": {
+    "install": "make install",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
