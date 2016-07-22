@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		027E08161D41481800921176 /* RNTaplytics.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 027E08151D41481800921176 /* RNTaplytics.h */; };
 		027E08181D41481800921176 /* RNTaplytics.m in Sources */ = {isa = PBXBuildFile; fileRef = 027E08171D41481800921176 /* RNTaplytics.m */; };
+		02C978F21D42E78600C53E90 /* Taplytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 02C978F11D42E78600C53E90 /* Taplytics.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,6 +29,7 @@
 		027E08121D41481800921176 /* libRNTaplytics.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNTaplytics.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		027E08151D41481800921176 /* RNTaplytics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RNTaplytics.h; sourceTree = "<group>"; };
 		027E08171D41481800921176 /* RNTaplytics.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RNTaplytics.m; sourceTree = "<group>"; };
+		02C978F11D42E78600C53E90 /* Taplytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Taplytics.framework; path = "taplytics-ios-sdk/Taplytics.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,6 +37,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				02C978F21D42E78600C53E90 /* Taplytics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -44,6 +47,7 @@
 		027E08091D41481800921176 = {
 			isa = PBXGroup;
 			children = (
+				02C978F41D42E7B500C53E90 /* Libraries */,
 				027E08141D41481800921176 /* RNTaplytics */,
 				027E08131D41481800921176 /* Products */,
 			);
@@ -64,6 +68,14 @@
 				027E08171D41481800921176 /* RNTaplytics.m */,
 			);
 			path = RNTaplytics;
+			sourceTree = "<group>";
+		};
+		02C978F41D42E7B500C53E90 /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				02C978F11D42E78600C53E90 /* Taplytics.framework */,
+			);
+			name = Libraries;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -226,6 +238,10 @@
 		027E081C1D41481800921176 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/taplytics-ios-sdk",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/**",
@@ -244,6 +260,10 @@
 		027E081D1D41481800921176 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/taplytics-ios-sdk",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/**",
