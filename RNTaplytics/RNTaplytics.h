@@ -6,8 +6,8 @@
 //  Copyright © 2016 Magoosh. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <RCTBridgeModule.h>
 
-@interface RNTaplytics : NSObject
+@interface RNTaplytics : NSObject<RCTBridgeModule>
 
 @end
