@@ -39,5 +39,5 @@ buck-out/
 android/app/libs
 android/keystores/debug.keystore
 
-# Custom magoosh-lessons-react stuff:
-config/
+# Custom react-native-taplytics stuff:
+taplytics-ios-sdk/
