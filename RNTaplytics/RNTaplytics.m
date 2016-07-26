@@ -8,6 +8,7 @@
 
 #import "RNTaplytics.h"
 #import <Taplytics.h>
+#import <TaplyticsVar.h>
 
 // Portions based on RNMixpanel
 // https://github.com/davodesign84/react-native-mixpanel
@@ -27,5 +28,26 @@ RCT_EXPORT_METHOD(setUserAttributes:(NSDictionary *)userAttributes) {
 RCT_EXPORT_METHOD(track:(NSString*)name value:(nullable NSNumber*)value metaData:(nullable NSDictionary*)metaData) {
     [Taplytics logEvent:name value:value metaData:metaData];
 }
+
+RCT_EXPORT_METHOD(reset:(nullable void(^)(void))callback) {
+    [Taplytics resetUser:callback];
+}
+
+RCT_EXPORT_METHOD(propertiesLoaded:(nonnull void(^)(BOOL))callback) {
+    [Taplytics propertiesLoadedCallback:callback];
+}
+
+RCT_EXPORT_METHOD(runningExperiments:(nonnull void(^)(NSDictionary * _Nullable experimentsAndVariations))callback) {
+    [Taplytics getRunningExperimentsAndVariations:callback];
+}
+
+RCT_EXPORT_METHOD(variable:(NSString*)name defaultValue:(NSObject*)defaultValue callback:(nonnull void(^)(NSObject * value))callback) {
+    [TaplyticsVar taplyticsVarWithName:name defaultValue:defaultValue updatedBlock:callback];
+}
+
+RCT_EXPORT_METHOD(codeBlock:(NSString*)name forBlock:(nonnull void(^)(void))callback) {
+    [Taplytics runCodeBlock:name forBlock:callback];
+}
+
 
 @end
