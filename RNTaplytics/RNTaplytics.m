@@ -41,8 +41,17 @@ RCT_EXPORT_METHOD(runningExperiments:(nonnull void(^)(NSDictionary * _Nullable e
     [Taplytics getRunningExperimentsAndVariations:callback];
 }
 
-RCT_EXPORT_METHOD(variable:(NSString*)name defaultValue:(NSObject*)defaultValue callback:(nonnull void(^)(NSObject * value))callback) {
-    [TaplyticsVar taplyticsVarWithName:name defaultValue:defaultValue updatedBlock:callback];
+RCT_EXPORT_METHOD(variable:(NSString*)name defaultValue:(NSObject*)defaultValue callback:(nullable void(^)(NSDictionary * value))callback) {
+    if (callback) {
+        // TODO(aria): Implement a real RCTConverter instead of making a wrapper dict.
+        [TaplyticsVar taplyticsVarWithName:name defaultValue:defaultValue updatedBlock:^(NSObject * _Nullable value) {
+            callback(@{
+                @"value": value
+            });
+        }];
+    } else {
+        [TaplyticsVar taplyticsVarWithName:name defaultValue:defaultValue updatedBlock:nil];
+    }
 }
 
 RCT_EXPORT_METHOD(codeBlock:(NSString*)name forBlock:(nonnull void(^)(void))callback) {

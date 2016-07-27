@@ -49,7 +49,11 @@ const Taplytics = {
   },
   reset: RNTaplytics.reset, // takes an optional callback
   runningExperiments: RNTaplytics.runningExperiments,
-  variable: RNTaplytics.variable,
+  variable: (name, defaultValue, callback) => {
+    return RNTaplytics.variable(name, defaultValue, callback && (dict) => {
+      callback(dict.value);
+    });
+  },
   codeBlock: RNTaplytics.codeBlock,
 };
 
