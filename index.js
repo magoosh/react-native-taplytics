@@ -50,7 +50,7 @@ const Taplytics = {
   reset: RNTaplytics.reset, // takes an optional callback
   runningExperiments: RNTaplytics.runningExperiments,
   variable: (name, defaultValue, callback) => {
-    return RNTaplytics.variable(name, defaultValue, callback && (dict) => {
+    return RNTaplytics.variable(name, {value: defaultValue}, callback && (dict) => {
       callback(dict.value);
     });
   },
