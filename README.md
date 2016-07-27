@@ -1,5 +1,11 @@
 # react-native-taplytics
 
+A native js API for the native taplytics APIs.
+Does it's best to be compatible with the [Taplytics JS API][1], with
+some added APIs for `performBackgroundFetch` and push notifications
+(not yet implemented).
+
+[1]: https://taplytics.com/docs/javascript-sdk/reference
 
 ## iOS Installation
 
@@ -19,3 +25,7 @@
    other than `$(inherited)` to `recursive`
 
 ## Android Installation
+
+## API
+
+See the [Taplytics JS API reference][1].
