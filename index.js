@@ -1,11 +1,52 @@
 'use strict';
 
-import { NativeModules } from 'react-native';
+import { NativeModules, NativeAppEventEmitter } from 'react-native';
 
 const RNTaplytics = NativeModules.RNTaplytics;
 
+let loadStatus = 'loading';
+
+let variableNames = [];
+let variableValues = [];
+let variableCallbacks = [];
+
+const resolveVariables = (success) => {
+  loadStatus = success ? 'succeeded' : 'failed';
+  RNTaplytics.variables(variableNames, variableValues, (results) => {
+    for (let i = 0; i < variableCallbacks.length; i++) {
+      variableCallbacks[i](results[i]);
+    }
+  });
+};
+
+const createVariable = (name, defaultValue, callback) => {
+  variableNames.push(name);
+  variableValues.push(defaultValue);
+  variableCallbacks.push(callback);
+  if (loadStatus !== 'loading') {
+    RNTaplytics.variables([name], [defaultValue], (results) => callback(results[0]));
+  }
+};
+
+var propertiesLoadedSubscription = NativeAppEventEmitter.addListener(
+  'RNTaplyticsPropertiesLoaded',
+  resolveVariables,
+);
+
+let alreadyInit = false;
+
 const Taplytics = {
-  init: RNTaplytics.init,
+  init: (apiToken, options) => {
+    if (alreadyInit) { return; }
+    alreadyInit = true;
+    loadStatus = 'loading';
+    RNTaplytics.init(apiToken, options);
+    const onPropertiesLoaded = (success) => {
+      resolveVariables(success);
+      RNTaplytics.propertiesLoadedCallback(false, onPropertiesLoaded);
+    };
+    RNTaplytics.propertiesLoadedCallback(true, onPropertiesLoaded);
+  },
   identify: RNTaplytics.setUserAttributes,
   track: (name, optionalValue, optionalAttributes) => {
     // TODO(aria): Better edge case handling here
@@ -50,12 +91,17 @@ const Taplytics = {
   reset: RNTaplytics.reset, // takes an optional callback
   runningExperiments: RNTaplytics.runningExperiments,
   variable: (name, defaultValue, callback) => {
-    return RNTaplytics.variable(name, {value: defaultValue}, callback);
+    createVariable(name, defaultValue, callback);
   },
   codeBlock: RNTaplytics.codeBlock,
   propertiesLoadedCallback: (callback) => {
-    RNTaplytics.propertiesLoadedCallback((loadedNum) => callback(!!loadedNum));
+    var propertiesLoadedSubscription = NativeAppEventEmitter.addListener(
+      'RNTaplyticsPropertiesLoaded',
+      callback,
+    );
+    return () => propertiesLoadedSubscription.remove();
   },
 };
+
 
 export default Taplytics;

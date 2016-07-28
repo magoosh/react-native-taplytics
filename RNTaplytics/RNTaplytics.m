@@ -7,6 +7,10 @@
 //
 
 #import "RNTaplytics.h"
+
+#import <RCTBridge.h>
+#import <RCTEventDispatcher.h>
+
 #import <Taplytics.h>
 #import <TaplyticsVar.h>
 
@@ -15,10 +19,20 @@
 
 @implementation RNTaplytics
 
+BOOL areEventsInitialized = NO;
+
+@synthesize bridge = _bridge;
+
 RCT_EXPORT_MODULE(RNTaplytics)
 
 RCT_EXPORT_METHOD(init:(NSString *)apiToken options:(NSDictionary *)options) {
     [Taplytics startTaplyticsAPIKey:apiToken options:options];
+    if (!areEventsInitialized) {
+        areEventsInitialized = YES;
+        [Taplytics propertiesLoadedCallback:^(BOOL loaded) {
+            [self.bridge.eventDispatcher sendAppEventWithName:@"RNTaplyticsPropertiesLoaded" body:[NSNumber numberWithBool:loaded]];
+        }];
+    }
 }
 
 RCT_EXPORT_METHOD(setUserAttributes:(NSDictionary *)userAttributes) {
@@ -42,24 +56,36 @@ RCT_EXPORT_METHOD(runningExperiments:(nonnull void(^)(NSDictionary * _Nullable e
 }
 
 RCT_EXPORT_METHOD(variable:(NSString*)name defaultValue:(NSDictionary*)defaultValue callback:(RCTResponseSenderBlock)callback) {
-    if (callback) {
-        // TODO(aria): Implement a real RCTConverter instead of making a wrapper dict.
-        [TaplyticsVar taplyticsVarWithName:name defaultValue:defaultValue[@"value"] updatedBlock:^(NSObject * _Nullable value) {
-            callback(@[value]);
-        }];
-    } else {
-        [TaplyticsVar taplyticsVarWithName:name defaultValue:defaultValue updatedBlock:nil];
-    }
+    // TODO(aria): Implement a real RCTConverter instead of making a wrapper dict.
+    TaplyticsVar * var = [TaplyticsVar taplyticsSyncVarWithName:name defaultValue:defaultValue[@"value"]];
+    callback(@[var.value]);
 }
+
+RCT_EXPORT_METHOD(variables:(NSArray*)names defaultValues:(NSArray*)defaultValues callback:(RCTResponseSenderBlock)callback) {
+    // TODO(aria): Implement a real RCTConverter instead of making a wrapper dict.
+    const int count = MIN((int)[names count], (int)[defaultValues count]);
+    NSMutableArray * results = [NSMutableArray arrayWithCapacity:count];
+    for (int i = 0; i < count; i++) {
+        TaplyticsVar * var = [TaplyticsVar taplyticsSyncVarWithName:names[i] defaultValue:defaultValues[i]];
+        [results addObject:var.value];
+    }
+    callback(@[results]);
+}
+
 
 RCT_EXPORT_METHOD(codeBlock:(NSString*)name forBlock:(nonnull void(^)(void))callback) {
     [Taplytics runCodeBlock:name forBlock:callback];
 }
 
-RCT_EXPORT_METHOD(propertiesLoadedCallback:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(propertiesLoadedCallback:(BOOL)triggerFirstTime callback:(RCTResponseSenderBlock)callback) {
+    __block int triggerCount = 0;
     [Taplytics propertiesLoadedCallback:^(BOOL loaded) {
-        callback(@[[NSNumber numberWithBool:loaded]]);
+        triggerCount++;
+        if ((triggerFirstTime && triggerCount == 1) || (!triggerFirstTime && triggerCount == 2)) {
+            callback(@[[NSNumber numberWithBool:loaded]]);
+        }
     }];
 }
+
 
 @end
