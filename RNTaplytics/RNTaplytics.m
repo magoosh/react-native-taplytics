@@ -56,5 +56,10 @@ RCT_EXPORT_METHOD(codeBlock:(NSString*)name forBlock:(nonnull void(^)(void))call
     [Taplytics runCodeBlock:name forBlock:callback];
 }
 
+RCT_EXPORT_METHOD(propertiesLoadedCallback:(RCTResponseSenderBlock)callback) {
+    [Taplytics propertiesLoadedCallback:^(BOOL loaded) {
+        callback(@[[NSNumber numberWithBool:loaded]]);
+    }];
+}
 
 @end

@@ -53,6 +53,9 @@ const Taplytics = {
     return RNTaplytics.variable(name, {value: defaultValue}, callback);
   },
   codeBlock: RNTaplytics.codeBlock,
+  propertiesLoadedCallback: (callback) => {
+    RNTaplytics.propertiesLoadedCallback((loadedNum) => callback(!!loadedNum));
+  },
 };
 
 export default Taplytics;
