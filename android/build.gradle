@@ -1,0 +1,42 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.1"
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 22
+        versionCode 1
+        versionName "1.0"
+        ndk {
+            abiFilters "armeabi-v7a", "x86"
+        }
+    }
+}
+
+dependencies {
+    compile 'com.facebook.react:react-native:0.19.+'
+
+    //Dependencies for Taplytics
+
+    compile 'com.taplytics.sdk:taplytics:+@aar'  
+
+    //socket.io connections only made on debug devices.
+    //To make live changes on a release build, remove the `debugcompile` flag
+    debugCompile ('io.socket:socket.io-client:+') {
+        exclude group: 'org.json', module: 'json'
+    }
+
+    //NOTE: You can use either Volley or Retrofit2. Do not use both if you do not have to.
+
+    //Volley
+    //compile 'com.android.volley:volley:+'
+
+    //Retrofit2
+    compile 'com.squareup.retrofit2:retrofit:+'
+
+    //Only include this if you wish to enable push notifications:
+    //compile("com.google.android.gms:play-services-gcm:9.+")
+}
+

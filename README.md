@@ -26,6 +26,36 @@ some added APIs for `performBackgroundFetch` and push notifications
 
 ## Android Installation
 
+1. `npm install react-native-taplytics --save`
+
+2. In `android/build.gradle`, add `url "https://github.com/taplytics/Taplytics-Android-SDK/raw/master/AndroidStudio/"`
+   to `allprojects { repositories { maven { } } }`:
+
+   ```
+   allprojects {
+       repositories {
+           mavenLocal()
+           jcenter()
+           maven {
+               // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+               url "$projectDir/../../node_modules/react-native/android"
+               url "https://github.com/taplytics/Taplytics-Android-SDK/raw/master/AndroidStudio/"
+           }
+       }
+   }
+   ```
+
+3. In `android/settings.gradle`, add the following two lines:
+   ```
+   include ':RNTaplytics'
+   project(':RNTaplytics').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-taplytics/android')
+   ```
+
+4. In `android/app/build.gradle`, add the following compilation step to `dependencies { }`:
+   ```
+   compile project(':RNTaplytics')
+   ```
+
 ## API
 
 See the [Taplytics JS API reference][1].
