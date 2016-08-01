@@ -31,10 +31,11 @@ dependencies {
     //NOTE: You can use either Volley or Retrofit2. Do not use both if you do not have to.
 
     //Volley
-    //compile 'com.android.volley:volley:+'
+    compile 'com.android.volley:volley:+'
 
     //Retrofit2
-    compile 'com.squareup.retrofit2:retrofit:+'
+    // init defaults to volley
+    //compile 'com.squareup.retrofit2:retrofit:+'
 
     //Only include this if you wish to enable push notifications:
     //compile("com.google.android.gms:play-services-gcm:9.+")

@@ -13,8 +13,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.taplytics.sdk.Taplytics;
+
 /**
- * Created by KevinEJohn on 2/11/16.
+ * Adapted from KevinEJohn's RNMixpanel.
  */
 public class RNTaplyticsModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
 
@@ -54,5 +56,17 @@ public class RNTaplyticsModule extends ReactContextBaseJavaModule implements Lif
         //if (mixpanel != null) {
         //    mixpanel.flush();
         //}
+    }
+
+    @ReactMethod
+    void init(String apiKey, ReadableMap options) {
+        Map<String, Object> nativeOptions = new HashMap<String, Object>();
+        Taplytics.startTaplytics(this, apiKey, nativeOptions);
+
+    }
+
+    @ReactMethod
+    void setUserAttributes(ReadableMap attributes) {
+
     }
 }
