@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import com.facebook.react.modules.core.RCTNativeAppEventEmitter;
 
@@ -139,8 +140,25 @@ public class RNTaplyticsModule extends ReactContextBaseJavaModule implements Lif
         final int count = Math.min(names_.size(), defaultValues_.size());
         final WritableArray results = new WritableNativeArray();
         for (int i = 0; i < count; i++) {
-            TaplyticsVar<String> v = new TaplyticsVar<String>((String)names_.get(i), (String)defaultValues_.get(i));
-            results.pushString(v.get());
+            String name = (String)names_.get(i);
+            Object defaultValue = defaultValues_.get(i);
+            if (defaultValue instanceof String) {
+                TaplyticsVar<String> v = new TaplyticsVar<String>(name, (String)defaultValue);
+                results.pushString(v.get());
+            } else if (defaultValue instanceof Number) {
+                TaplyticsVar<Number> v = new TaplyticsVar<Number>(name, (Number)defaultValue);
+                results.pushDouble(v.get().doubleValue());
+            } else if (defaultValue instanceof Boolean) {
+                TaplyticsVar<Boolean> v = new TaplyticsVar<Boolean>(name, (Boolean)defaultValue);
+                results.pushBoolean(v.get());
+            } else if (defaultValue instanceof Map) {
+                try {
+                    TaplyticsVar<JSONObject> v = new TaplyticsVar<JSONObject>(name, new JSONObject((Map)defaultValue));
+                    results.pushMap(reactMapFromJson(v.get()));
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
         callback.invoke(results);
     }
@@ -260,6 +278,58 @@ public class RNTaplyticsModule extends ReactContextBaseJavaModule implements Lif
             }
         }
         return jsonArray;
+    }
+
+    static WritableMap reactMapFromJson(JSONObject json) throws JSONException {
+        WritableMap result = new WritableNativeMap();
+        Iterator<String> keyIterator = json.keys();
+        while (keyIterator.hasNext()) {
+            String key = keyIterator.next();
+            Object value = json.get(key);
+            if (value == null || value == JSONObject.NULL) {
+                result.putNull(key);
+            } else if (value instanceof Boolean) {
+                result.putBoolean(key, (Boolean)value);
+            } else if (value instanceof Integer) {
+                result.putInt(key, (Integer)value);
+            } else if (value instanceof Double) {
+                result.putDouble(key, (Double)value);
+            } else if (value instanceof String) {
+                result.putString(key, (String)value);
+            } else if (value instanceof JSONObject) {
+                result.putMap(key, reactMapFromJson((JSONObject)value));
+            } else if (value instanceof JSONArray) {
+                result.putArray(key, reactArrayFromJson((JSONArray)value));
+            } else {
+                throw new RuntimeException("Bad value in JSON object: " + value.toString());
+            }
+        }
+        return result;
+    }
+
+    static WritableArray reactArrayFromJson(JSONArray json) throws JSONException {
+        WritableArray result = new WritableNativeArray();
+        for (int i = 0; i < json.length(); i++) {
+            Object value = json.get(i);
+            if (value == null || value == JSONObject.NULL) {
+                result.pushNull();
+            } else if (value instanceof Boolean) {
+                result.pushBoolean((Boolean)value);
+            } else if (value instanceof Integer) {
+                result.pushInt((Integer)value);
+            } else if (value instanceof Double) {
+                result.pushDouble((Double)value);
+            } else if (value instanceof String) {
+                result.pushString((String)value);
+            } else if (value instanceof JSONObject) {
+                result.pushMap(reactMapFromJson((JSONObject)value));
+            } else if (value instanceof JSONArray) {
+                result.pushArray(reactArrayFromJson((JSONArray)value));
+            } else {
+                throw new RuntimeException("Bad value in JSON array: " + value.toString());
+            }
+        }
+        return result;
     }
 }
 
