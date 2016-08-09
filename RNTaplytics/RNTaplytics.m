@@ -39,7 +39,11 @@ RCT_EXPORT_METHOD(setUserAttributes:(NSDictionary *)userAttributes) {
     [Taplytics setUserAttributes:userAttributes];
 }
 
-RCT_EXPORT_METHOD(track:(NSString*)name value:(nullable NSNumber*)value metaData:(nullable NSDictionary*)metaData) {
+RCT_EXPORT_METHOD(track:(NSString*)name metaData:(nullable NSDictionary*)metaData) {
+    [Taplytics logEvent:name value:nil metaData:metaData];
+}
+
+RCT_EXPORT_METHOD(trackWithValue:(NSString*)name value:(NSNumber*)value metaData:(nullable NSDictionary*)metaData) {
     [Taplytics logEvent:name value:value metaData:metaData];
 }
 

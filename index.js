@@ -24,7 +24,9 @@ const createVariable = (name, defaultValue, callback) => {
   variableValues.push(defaultValue);
   variableCallbacks.push(callback);
   if (loadStatus !== 'loading') {
-    RNTaplytics.variables([name], [defaultValue], (results) => callback(results[0]));
+    return RNTaplytics.variables([name], [defaultValue], (results) => callback(results[0]));
+  } else {
+    return defaultValue;
   }
 };
 
@@ -50,10 +52,14 @@ const Taplytics = {
   identify: RNTaplytics.setUserAttributes,
   track: (name, optionalValue, optionalAttributes) => {
     // TODO(aria): Better edge case handling here
-    const value = (typeof optionalValue === 'number') ? optionalValue : 0;
+    const value = (typeof optionalValue === 'number') ? optionalValue : null;
     const attributes = (optionalValue == null) ? optionalValue : optionalAttributes;
 
-    RNTaplytics.track(name, value, attributes);
+    if (value == null) {
+      RNTaplytics.track(name, attributes);
+    } else {
+      RNTaplytics.trackWithValue(name, value, attributes);
+    }
   },
   page: (optionalCategory, optionalName, optionalAttributes) => {
     console.warn(
@@ -91,7 +97,7 @@ const Taplytics = {
   reset: RNTaplytics.reset, // takes an optional callback
   runningExperiments: RNTaplytics.runningExperiments,
   variable: (name, defaultValue, callback) => {
-    createVariable(name, defaultValue, callback);
+    return createVariable(name, defaultValue, callback);
   },
   codeBlock: RNTaplytics.codeBlock,
   propertiesLoadedCallback: (callback) => {
