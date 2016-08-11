@@ -55,6 +55,22 @@ some added APIs for `performBackgroundFetch` and push notifications
    ```
    compile project(':RNTaplytics')
    ```
+5. In `MainActivity.java` import the library and add it to the list of packages returned by `getPackages()`:
+
+   ```
+   import com.magoosh.RNTaplytics.RNTaplytics;    // <-- import at the top of the file
+
+   // ...
+
+       @Override
+       protected List<ReactPackage> getPackages() {
+           return Arrays.<ReactPackage>asList(
+               new RNTaplytics(),                     // <-- add RNTaplytics to the list of packages
+               new MainReactPackage()
+           );
+   ```
+
+
 
 ## API
 

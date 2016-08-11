@@ -43,11 +43,6 @@ const Taplytics = {
     alreadyInit = true;
     loadStatus = 'loading';
     RNTaplytics.init(apiToken, options);
-    const onPropertiesLoaded = (success) => {
-      resolveVariables(success);
-      RNTaplytics.propertiesLoadedCallback(false, onPropertiesLoaded);
-    };
-    RNTaplytics.propertiesLoadedCallback(true, onPropertiesLoaded);
   },
   identify: RNTaplytics.setUserAttributes,
   track: (name, optionalValue, optionalAttributes) => {

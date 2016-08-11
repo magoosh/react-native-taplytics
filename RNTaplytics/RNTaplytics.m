@@ -19,20 +19,15 @@
 
 @implementation RNTaplytics
 
-BOOL areEventsInitialized = NO;
-
 @synthesize bridge = _bridge;
 
 RCT_EXPORT_MODULE(RNTaplytics)
 
 RCT_EXPORT_METHOD(init:(NSString *)apiToken options:(NSDictionary *)options) {
     [Taplytics startTaplyticsAPIKey:apiToken options:options];
-    if (!areEventsInitialized) {
-        areEventsInitialized = YES;
-        [Taplytics propertiesLoadedCallback:^(BOOL loaded) {
-            [self.bridge.eventDispatcher sendAppEventWithName:@"RNTaplyticsPropertiesLoaded" body:[NSNumber numberWithBool:loaded]];
-        }];
-    }
+    [Taplytics propertiesLoadedCallback:^(BOOL loaded) {
+        [self.bridge.eventDispatcher sendAppEventWithName:@"RNTaplyticsPropertiesLoaded" body:[NSNumber numberWithBool:loaded]];
+    }];
 }
 
 RCT_EXPORT_METHOD(setUserAttributes:(NSDictionary *)userAttributes) {

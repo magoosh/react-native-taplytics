@@ -108,7 +108,17 @@ public class RNTaplyticsModule extends ReactContextBaseJavaModule implements Lif
         }
     }
 
-    public void track(String name, Double value, ReadableMap metaData) {
+    @ReactMethod
+    public void track(String name, ReadableMap metaData) {
+        try {
+            Taplytics.logEvent(name, null, jsonFromReact(metaData));
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @ReactMethod
+    public void trackWithValue(String name, Double value, ReadableMap metaData) {
         try {
             Taplytics.logEvent(name, value, jsonFromReact(metaData));
         } catch (JSONException e) {
@@ -116,6 +126,7 @@ public class RNTaplyticsModule extends ReactContextBaseJavaModule implements Lif
         }
     }
 
+    @ReactMethod
     public void reset(final Callback callback) {
         Taplytics.resetAppUser(new TaplyticsResetUserListener() {
             public void finishedResettingUser() {
@@ -126,14 +137,17 @@ public class RNTaplyticsModule extends ReactContextBaseJavaModule implements Lif
         });
     }
 
+    @ReactMethod
     public void propertiesLoaded(Callback callback) {
         // TODO(aria): Implement me
     }
 
+    @ReactMethod
     public void runningExperiments(Callback callback) {
         // TODO(aria): Implement me
     }
 
+    @ReactMethod
     public void variables(ReadableArray names, ReadableArray defaultValues, Callback callback) {
         final ArrayList<Object> names_ = arrayFromReactArray(names);
         final ArrayList<Object> defaultValues_ = arrayFromReactArray(defaultValues);
@@ -165,6 +179,9 @@ public class RNTaplyticsModule extends ReactContextBaseJavaModule implements Lif
 
     // Private JSON converting
     static Map<String, Object> hashMapFromReactMap(ReadableMap reactMap) {
+        if (reactMap == null) {
+            return null;
+        }
         Map<String, Object> result = new HashMap<String, Object>();
         ReadableMapKeySetIterator iterator = reactMap.keySetIterator();
         while (iterator.hasNextKey()) {
@@ -195,6 +212,9 @@ public class RNTaplyticsModule extends ReactContextBaseJavaModule implements Lif
     }
 
     static ArrayList<Object> arrayFromReactArray(ReadableArray reactArray) {
+        if (reactArray == null) {
+            return null;
+        }
         ArrayList<Object> result = new ArrayList<Object>(reactArray.size());
         for (int i=0; i < reactArray.size(); i++) {
             ReadableType valueType = reactArray.getType(i);
@@ -223,6 +243,9 @@ public class RNTaplyticsModule extends ReactContextBaseJavaModule implements Lif
     }
 
     static JSONObject jsonFromReact(ReadableMap readableMap) throws JSONException {
+        if (readableMap == null) {
+            return null;
+        }
         JSONObject jsonObject = new JSONObject();
         ReadableMapKeySetIterator iterator = readableMap.keySetIterator();
         while(iterator.hasNextKey()){
@@ -253,6 +276,9 @@ public class RNTaplyticsModule extends ReactContextBaseJavaModule implements Lif
         return jsonObject;
     }
     static JSONArray jsonFromReact(ReadableArray readableArray) throws JSONException {
+        if (readableArray == null) {
+            return null;
+        }
         JSONArray jsonArray = new JSONArray();
         for(int i=0; i < readableArray.size(); i++) {
             ReadableType valueType = readableArray.getType(i);
