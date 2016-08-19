@@ -17,7 +17,7 @@ some added APIs for `performBackgroundFetch` and push notifications
 4. Optionally drag these new libraries to your project's Libraries folder
 5. In XCode's project navigator, click on your project, choose your app's build target,
    and go to Build Phases
-6. Add libRNTaplytics.a, Taplytics.framework, CoreTelephony.framework, and SystemConfiguration.framework to the 'Link Binary with Libraries' step
+6. Add libRNTaplytics.a, CoreTelephony.framework, and SystemConfiguration.framework to the 'Link Binary with Libraries' step. Then add Taplytics.framework to Embedded Binaries.
 7. In your project target's Build Settings tab, find 'Framework Search Paths' and add two entries:
     * `$(inherited)`
     * `../node_modules/react-native-taplytics/taplytics-ios-sdk/Taplytics.framework`
