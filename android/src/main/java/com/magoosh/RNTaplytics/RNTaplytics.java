@@ -7,6 +7,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.uimanager.ViewManager;
 
 import android.app.Application;
+import android.app.Activity;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -18,6 +19,12 @@ import java.util.Map;
  */
 public class RNTaplytics implements ReactPackage {
 
+    Application application;
+
+    public RNTaplytics(Activity activity) {
+        this.application = activity.getApplication();
+    }
+
     public static void init(Application app, String apiKey, Map<String, Object> options) {
         RNTaplyticsModule.onCreateInit(app, apiKey, options);
     }
@@ -25,7 +32,7 @@ public class RNTaplytics implements ReactPackage {
     @Override
     public List<NativeModule> createNativeModules(
             ReactApplicationContext reactContext) {
-        RNTaplyticsModule module = new RNTaplyticsModule(reactContext);
+        RNTaplyticsModule module = new RNTaplyticsModule(application, reactContext);
         return Arrays.<NativeModule>asList(module);
     }
 

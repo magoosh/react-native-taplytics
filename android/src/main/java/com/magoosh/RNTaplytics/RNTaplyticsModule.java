@@ -46,10 +46,12 @@ public class RNTaplyticsModule extends ReactContextBaseJavaModule implements Lif
     static volatile boolean propertiesLoaded = false;
 
     ReactApplicationContext reactContext;
+    Application application;
 
-    public RNTaplyticsModule(ReactApplicationContext reactContext) {
+    public RNTaplyticsModule(Application app, ReactApplicationContext reactContext) {
         super(reactContext);
         RNTaplyticsModule.module = this;
+        this.application = app;
         this.reactContext = reactContext;
 
         // Get lifecycle notifications to flush on pause or destroy
@@ -96,6 +98,7 @@ public class RNTaplyticsModule extends ReactContextBaseJavaModule implements Lif
         //RNTaplyticsModule.apiKey = apiKey;
         //RNTaplyticsModule.options = options;
         android.util.Log.d("JEN? DO I HAVE A NAME?", "onCreateInit");
+        android.util.Log.d("TAPLYTICS START", "Taplytics.startTaplytics" + app + ", " + apiKey + ", " + options + ");");
         Taplytics.startTaplytics(
             app,
             apiKey,
@@ -112,6 +115,11 @@ public class RNTaplyticsModule extends ReactContextBaseJavaModule implements Lif
 
     @ReactMethod
     public void init(String apiKey, ReadableMap options) {
+        HashMap<String, Object> nativeOptions = options == null ?
+            new HashMap<String, Object>(1) :
+            hashMapFromReactMap(options);
+        nativeOptions.put("delayedStartTaplytics", true);
+        onCreateInit(this.application, apiKey, nativeOptions);
         /*Map<String, Object> hashOptions = hashMapFromReactMap(options);
         
         if (!apiKey.equals(RNTaplyticsModule.apiKey) || hashOptions.equals(RNTaplyticsModule.options)) {
@@ -207,11 +215,11 @@ public class RNTaplyticsModule extends ReactContextBaseJavaModule implements Lif
     }
 
     // Private JSON converting
-    static Map<String, Object> hashMapFromReactMap(ReadableMap reactMap) {
+    static HashMap<String, Object> hashMapFromReactMap(ReadableMap reactMap) {
         if (reactMap == null) {
             return null;
         }
-        Map<String, Object> result = new HashMap<String, Object>();
+        HashMap<String, Object> result = new HashMap<String, Object>();
         ReadableMapKeySetIterator iterator = reactMap.keySetIterator();
         while (iterator.hasNextKey()) {
             String key = iterator.nextKey();
