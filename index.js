@@ -1,6 +1,6 @@
 'use strict';
 
-import { NativeModules, NativeAppEventEmitter } from 'react-native';
+import { NativeModules, NativeAppEventEmitter, Linking, Alert, Platform } from 'react-native';
 
 const RNTaplytics = NativeModules.RNTaplytics;
 
@@ -43,6 +43,22 @@ const Taplytics = {
     alreadyInit = true;
     loadStatus = 'loading';
     RNTaplytics.init(apiToken, options);
+  },
+  initDeepLinking: () => {
+    Platform.OS == 'android' && RNTaplytics.deviceLink("tl-24572c93://bcc1991fdda6");
+    Alert.alert("device linked: tl-24572c93://bcc1991fdda6")
+    const handleDeepLink = (e) => {
+      Alert.alert("hi there!", e.url);
+      //RNTaplytics.deviceLink(e.url);
+      return true;
+    };
+    Linking.getInitialURL().then((url) => {
+      if (url) {
+        handleDeepLink({url: url});
+      }
+    });
+    Linking.addEventListener('url', handleDeepLink);
+    return () => Linking.removeEventListener('url', handleDeepLink);
   },
   identify: RNTaplytics.setUserAttributes,
   track: (name, optionalValue, optionalAttributes) => {

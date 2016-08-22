@@ -11,6 +11,7 @@ import com.facebook.react.modules.core.RCTNativeAppEventEmitter;
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
@@ -21,6 +22,8 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.Callback;
+
+import android.app.Application;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,14 +39,20 @@ import com.taplytics.sdk.TaplyticsResetUserListener;
  */
 public class RNTaplyticsModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
 
+    // Yay singletons ;-;
+    static volatile RNTaplyticsModule module;
+    static volatile String apiKey;
+    static volatile Map<String, Object> options;
+    static volatile boolean propertiesLoaded = false;
+
     ReactApplicationContext reactContext;
-    boolean areEventsInitialized = false;
 
     public RNTaplyticsModule(ReactApplicationContext reactContext) {
         super(reactContext);
+        RNTaplyticsModule.module = this;
         this.reactContext = reactContext;
 
-        // Get lifecycle notifications to flush mixpanel on pause or destroy
+        // Get lifecycle notifications to flush on pause or destroy
         reactContext.addLifecycleEventListener(this);
     }
 
@@ -75,7 +84,7 @@ public class RNTaplyticsModule extends ReactContextBaseJavaModule implements Lif
         //}
     }
 
-    private void sendEvent(
+    protected void sendEvent(
             String eventName,
             Object data) {
         reactContext
@@ -83,20 +92,34 @@ public class RNTaplyticsModule extends ReactContextBaseJavaModule implements Lif
             .emit(eventName, data);
     }
 
-    @ReactMethod
-    public void init(String apiKey, ReadableMap options) {
-        Taplytics.startTaplytics(
-            reactContext,
+    public static void onCreateInit(Application app, String apiKey, Map<String, Object> options) {
+        RNTaplyticsModule.apiKey = apiKey;
+        RNTaplyticsModule.options = options;
+        /*Taplytics.startTaplytics(
+            app,
             apiKey,
-            hashMapFromReactMap(options),
+            options,
             new TaplyticsExperimentsLoadedListener() {
                 @Override
                 public void loaded() {
-                    sendEvent("RNTaplyticsPropertiesLoaded", Boolean.TRUE);
+                    RNTaplyticsModule.propertiesLoaded = true;
+                    RNTaplyticsModule.module.sendEvent("RNTaplyticsPropertiesLoaded", Boolean.TRUE);
                 }
             }
-        );
-        areEventsInitialized = true;
+        );*/
+    }
+
+    @ReactMethod
+    public void init(String apiKey, ReadableMap options) {
+        Map<String, Object> hashOptions = hashMapFromReactMap(options);
+        
+        if (!apiKey.equals(RNTaplyticsModule.apiKey) || hashOptions.equals(RNTaplyticsModule.options)) {
+            throw new RuntimeException("init must be called in the Application onCreate in java");
+        }
+
+        /*if (RNTaplyticsModule.propertiesLoaded) {
+            sendEvent("RNTaplyticsPropertiesLoaded", true);
+        }*/
     }
 
     @ReactMethod
@@ -175,6 +198,11 @@ public class RNTaplyticsModule extends ReactContextBaseJavaModule implements Lif
             }
         }
         callback.invoke(results);
+    }
+
+    @ReactMethod
+    public void deviceLink(String url) {
+        Taplytics.deviceLink(url);
     }
 
     // Private JSON converting

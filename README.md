@@ -65,7 +65,7 @@ some added APIs for `performBackgroundFetch` and push notifications
        @Override
        protected List<ReactPackage> getPackages() {
            return Arrays.<ReactPackage>asList(
-               new RNTaplytics(),                     // <-- add RNTaplytics to the list of packages
+               new RNTaplytics(this),                 // <-- add RNTaplytics to the list of packages
                new MainReactPackage()
            );
    ```
