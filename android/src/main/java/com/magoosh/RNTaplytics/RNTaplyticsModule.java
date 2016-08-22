@@ -93,9 +93,10 @@ public class RNTaplyticsModule extends ReactContextBaseJavaModule implements Lif
     }
 
     public static void onCreateInit(Application app, String apiKey, Map<String, Object> options) {
-        RNTaplyticsModule.apiKey = apiKey;
-        RNTaplyticsModule.options = options;
-        /*Taplytics.startTaplytics(
+        //RNTaplyticsModule.apiKey = apiKey;
+        //RNTaplyticsModule.options = options;
+        android.util.Log.d("JEN? DO I HAVE A NAME?", "onCreateInit");
+        Taplytics.startTaplytics(
             app,
             apiKey,
             options,
@@ -106,16 +107,16 @@ public class RNTaplyticsModule extends ReactContextBaseJavaModule implements Lif
                     RNTaplyticsModule.module.sendEvent("RNTaplyticsPropertiesLoaded", Boolean.TRUE);
                 }
             }
-        );*/
+        );
     }
 
     @ReactMethod
     public void init(String apiKey, ReadableMap options) {
-        Map<String, Object> hashOptions = hashMapFromReactMap(options);
+        /*Map<String, Object> hashOptions = hashMapFromReactMap(options);
         
         if (!apiKey.equals(RNTaplyticsModule.apiKey) || hashOptions.equals(RNTaplyticsModule.options)) {
             throw new RuntimeException("init must be called in the Application onCreate in java");
-        }
+        }*/
 
         /*if (RNTaplyticsModule.propertiesLoaded) {
             sendEvent("RNTaplyticsPropertiesLoaded", true);
