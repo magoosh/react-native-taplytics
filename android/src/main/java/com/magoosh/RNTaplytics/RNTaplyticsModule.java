@@ -32,6 +32,7 @@ import org.json.JSONObject;
 import com.taplytics.sdk.Taplytics;
 import com.taplytics.sdk.TaplyticsVar;
 import com.taplytics.sdk.TaplyticsExperimentsLoadedListener;
+import com.taplytics.sdk.TaplyticsExperimentsUpdatedListener;
 import com.taplytics.sdk.TaplyticsResetUserListener;
 
 /**
@@ -41,9 +42,8 @@ public class RNTaplyticsModule extends ReactContextBaseJavaModule implements Lif
 
     // Yay singletons ;-;
     static volatile RNTaplyticsModule module;
-    static volatile String apiKey;
-    static volatile Map<String, Object> options;
     static volatile boolean propertiesLoaded = false;
+    static volatile boolean hasBeenInit = false;
 
     ReactApplicationContext reactContext;
     Application application;
@@ -80,10 +80,6 @@ public class RNTaplyticsModule extends ReactContextBaseJavaModule implements Lif
     @Override
     public void onHostDestroy() {
         // Actvity `onDestroy`
-
-        //if (mixpanel != null) {
-        //    mixpanel.flush();
-        //}
     }
 
     protected void sendEvent(
@@ -95,10 +91,11 @@ public class RNTaplyticsModule extends ReactContextBaseJavaModule implements Lif
     }
 
     public static void onCreateInit(Application app, String apiKey, Map<String, Object> options) {
-        //RNTaplyticsModule.apiKey = apiKey;
-        //RNTaplyticsModule.options = options;
-        android.util.Log.d("JEN? DO I HAVE A NAME?", "onCreateInit");
-        android.util.Log.d("TAPLYTICS START", "Taplytics.startTaplytics" + app + ", " + apiKey + ", " + options + ");");
+        if (RNTaplyticsModule.hasBeenInit) {
+            return;
+        }
+        RNTaplyticsModule.hasBeenInit = true;
+
         Taplytics.startTaplytics(
             app,
             apiKey,
@@ -111,6 +108,13 @@ public class RNTaplyticsModule extends ReactContextBaseJavaModule implements Lif
                 }
             }
         );
+
+        Taplytics.setTaplyticsExperimentsUpdatedListener(new TaplyticsExperimentsUpdatedListener() {
+            @Override
+            public void onExperimentUpdate() {
+                RNTaplyticsModule.module.sendEvent("RNTaplyticsPropertiesLoaded", Boolean.TRUE);
+            }
+        });
     }
 
     @ReactMethod
@@ -120,15 +124,6 @@ public class RNTaplyticsModule extends ReactContextBaseJavaModule implements Lif
             hashMapFromReactMap(options);
         nativeOptions.put("delayedStartTaplytics", true);
         onCreateInit(this.application, apiKey, nativeOptions);
-        /*Map<String, Object> hashOptions = hashMapFromReactMap(options);
-        
-        if (!apiKey.equals(RNTaplyticsModule.apiKey) || hashOptions.equals(RNTaplyticsModule.options)) {
-            throw new RuntimeException("init must be called in the Application onCreate in java");
-        }*/
-
-        /*if (RNTaplyticsModule.propertiesLoaded) {
-            sendEvent("RNTaplyticsPropertiesLoaded", true);
-        }*/
     }
 
     @ReactMethod

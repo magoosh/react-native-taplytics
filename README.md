@@ -51,10 +51,14 @@ some added APIs for `performBackgroundFetch` and push notifications
    project(':RNTaplytics').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-taplytics/android')
    ```
 
-4. In `android/app/build.gradle`, add the following compilation step to `dependencies { }`:
+4. In `android/app/build.gradle`, add the following compilation steps to `dependencies { }`:
    ```
-   compile project(':RNTaplytics')
+   compile project(path: ':RNTaplytics', configuration: 'release')
+   // If you want live-updating for debug builds:
+   // You probably shouldn't enable this for release builds because it bugs-out the non-live mode
+   debugCompile ('io.socket:socket.io-client:+') { exclude group: 'org.json', module: 'json' }
    ```
+
 5. In `MainActivity.java` import the library and add it to the list of packages returned by `getPackages()`:
 
    ```
@@ -69,7 +73,6 @@ some added APIs for `performBackgroundFetch` and push notifications
                new MainReactPackage()
            );
    ```
-
 
 
 ## API
