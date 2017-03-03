@@ -1,5 +1,7 @@
 # react-native-taplytics
 
+## *Unsupported: we no longer use this. You're welcome to adapt this to your own needs, but we can't help with support. \<3s!*
+
 A native js API for the native taplytics APIs.
 Does it's best to be compatible with the [Taplytics JS API][1], with
 some added APIs for `performBackgroundFetch` and push notifications
